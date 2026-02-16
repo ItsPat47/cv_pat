@@ -1,0 +1,26 @@
+---
+title: Rôles
+description: Les Rôles et pourquoi c'est important
+---
+
+<p>Les <strong>rôles IAM</strong> sont l'une des fonctionnalités les plus importantes et les plus sécurisées du service AWS IAM.</p>
+
+<p>L'intérêt principal d'un rôle est de fournir des <strong>accès temporaires</strong> (via des credentials de courte durée) sans avoir à créer ni gérer de clés d'accès permanentes.</p>
+
+<h3>Pourquoi privilégier des accès temporaires ?</h3>
+
+<p>Contrairement aux clés d'accès IAM (long terme), les credentials d'un rôle sont :</p>
+<ul>
+  <li>générées à la demande par AWS STS lors de l'<strong>assumption</strong> du rôle</li>
+  <li>valables pour une durée limitée (généralement 1 heure, configurable jusqu'à 12 heures maximum)</li>
+  <li>rafraîchies automatiquement et de manière transparente par les SDK AWS, les agents EC2, Lambda, ECS, etc.</li>
+</ul>
+
+<p>Cela réduit très fortement le risque en cas de compromission :</p>
+<ul>
+  <li>si les credentials sont leakées, elles expirent automatiquement après quelques heures</li>
+  <li>pas de clés permanentes à rotator manuellement ni à stocker dans du code, des dépôts Git ou des serveurs</li>
+  <li>possibilité de révoquer immédiatement toutes les sessions actives d'un rôle</li>
+</ul>
+
+<p>Les rôles sont aujourd'hui la meilleure pratique recommandée par AWS pour presque tous les cas : applications, services AWS, CI/CD, accès cross-account, fédération d'identité (OIDC/SAML), workloads on-premise, etc.</p>

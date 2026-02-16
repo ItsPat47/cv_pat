@@ -1,0 +1,30 @@
+---
+title: Personnes & Groupes de personnes
+description: Description des personnes et groupes de personnes
+---
+## Utilisateurs IAM (Personnes)
+
+Les **utilisateurs IAM** représentent les **personnes réelles** (ou parfois des applications legacy) qui se connectent au compte AWS.
+
+Chaque utilisateur a :
+- un nom unique (ex. : alice.dev, bob.admin)
+- ses propres identifiants de connexion (mot de passe + éventuellement clés d’accès)
+- des permissions qui proviennent soit directement de politiques attachées à l’utilisateur, soit (et c’est recommandé) des **groupes** auxquels il appartient.
+
+## Groupes d’utilisateurs IAM
+
+Les **groupes** permettent de regrouper plusieurs utilisateurs qui doivent avoir les **mêmes permissions**.
+
+Avantages principaux :
+- **Centralisation** : on attache les politiques (permissions) au **groupe** une seule fois
+- **Simplicité de gestion** : quand un utilisateur change de poste → on le déplace de groupe → ses droits changent automatiquement
+- **Moins d’erreurs** : pas besoin de gérer individuellement 50 utilisateurs
+
+Exemple classique :
+- Groupe `Développeurs` → accès en lecture/écriture aux buckets dev + CodeCommit + ECS dev
+- Groupe `Admins` → politique `AdministratorAccess`
+- Groupe `LectureSeule` → politique `ReadOnlyAccess` + quelques extras
+
+<span style="color: #ff0000;">**Note importante (2025-2026)**  </span>
+Pour les accès humains, AWS recommande fortement d’utiliser **IAM Identity Center** (SSO) + **rôles assumables** plutôt que des utilisateurs IAM directs + groupes.  
+Les groupes restent très utiles pour les cas simples, legacy ou en attendant une migration complète vers le SSO.

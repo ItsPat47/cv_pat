@@ -1,0 +1,36 @@
+
+---
+title: GitHub Pages
+description: Pages statique de github
+---
+
+GitHub Pages est un service d'hébergement statique gratuit fourni par GitHub, distribué via un CDN mondial. Il permet de publier facilement des sites web statiques (HTML, CSS, JavaScript, Markdown, images…) directement depuis un dépôt Git.
+
+## Avantages principaux
+
+- **Déploiement ultra-rapide** : un simple `git push` déclenche la mise en ligne automatique (quelques secondes à quelques minutes).
+- **Idéal pour** : portfolios, sites vitrine, documentation de projets, CV en ligne, landing pages, notes techniques.
+- **Versioning intégré** : tout le contenu est géré via Git → historique complet, branches, pull requests, collaboration facile.
+- **Intégration GitHub Actions** : possibilité d'automatiser des builds complexes (ex. : Hugo, Next.js export statique, etc.).
+- **HTTPS gratuit et automatique** : certificat Let's Encrypt inclus.
+- **CDN mondial** : excellente performance et disponibilité géographique.
+- **Zéro coût** pour les usages standards (public ou privé avec accès restreint).
+
+## Limites importantes (2026)
+
+- **Taille du site publié** : limite souple (soft limit) de **1 Go** pour le site déployé.
+(Le dépôt source est recommandé < 1 Go, mais peut aller jusqu'à ~5 Go sans blocage strict.)
+- **Bande passante** : limite souple de **100 Go par mois**. Au-delà, GitHub peut temporairement restreindre l'accès (pas de coupure définitive, mais ralentissement ou blocage partiel possible).
+- **Builds** : limite souple de **10 builds par heure**.
+Temps maximum par build : **10 minutes** (timeout au-delà).
+- **Pas de backend serveur** : aucun support pour PHP, Node.js, bases de données, formulaires dynamiques natifs, authentification serveur… (tout doit être statique ou via services externes : Netlify Forms, Formspree, Disqus, etc.).
+- **Un seul site utilisateur/organisation** : par compte ([tonnom.github.io](http://tonnom.github.io/)).
+Sites de projet illimités ([tonnom.github.io/nom-projet](http://tonnom.github.io/nom-projet)).
+
+## Cas d'usage typiques vs alternatives
+
+- Portfolio / Blog perso / Docs → **GitHub Pages** (parfait).
+- Site avec formulaire / commentaires dynamiques → GitHub Pages + service tiers.
+- Très fort trafic (>100 Go/mois) ou besoin de backend → Vercel, Netlify, Cloudflare Pages, Render, etc.
+
+GitHub Pages reste l'une des solutions les plus simples et intégrées pour héberger du contenu statique de manière fiable et gratuite.
