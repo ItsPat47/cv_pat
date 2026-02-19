@@ -1,15 +1,50 @@
 ---
+
 title: Iam Identity Center
 description: IAM recommandé par Amazon
 ---
 
+import { Image } from 'astro:assets';
+import iam1 from '../../../../assets/IAM/iam1.png';
+import iamg from '../../../../assets/IAM/iam_g.png';
+import iamfini from '../../../../assets/IAM/iam_finish.png';
+import iammulti1 from '../../../../assets/IAM/multi1.png';
+import affecterc from '../../../../assets/IAM/affecter_comptes.png';
+
+
 **AWS IAM identity Center** est aujourd'hui la solution recommandée par AWS pour gérer l'accès aux humains aux comptes AWS et applications.
 
-## L'interet de IAM Identity Center
-Voici quelques inconvéniants de IAM: 
-- Les anciens utilisateurs IAM, avec des access keys **permanents + mot de passe** sont obselètes.
-- Les clés permanents sont un risque critique en cas de leak.
-- Gestion manuelle par comptes
-- Pas de SSO (Single Sign-on) centralisé = Login différent
+## L'intérêt de IAM Identity Center
+Voici quelques inconvénients de IAM :
 
-IAM Identity Center Résout tout ces problèmes en SSO et avec des accès temporaires et géstion centralisé.
+Les anciens utilisateurs IAM, avec des access keys permanentes + mot de passe sont obsolètes.
+
+Les clés permanentes sont un risque critique en cas de fuite.
+
+Gestion manuelle par comptes
+
+Pas de SSO (Single Sign-on) centralisé = Login différent
+
+IAM Identity Center résout tous ces problèmes avec le **SSO et des accès temporaires** ainsi qu'une **gestion centralisée**.
+
+### 1 - Créer un utilisateur IAM Identity Center
+Service IAM Identity Center > Utilisateurs > Ajouter un utilisateur
+<Image src={iam1} alt="connect" />
+
+Remplir les champs puis passer à la page suivante
+Affiliez à un groupe (s'il en existe)
+<Image src={iamg} alt="image groupe IAM" />
+Après avoir ajouté l'utilisateur et le groupe, une fenêtre de confirmation apparaît
+<Image src={iamfini} alt="image fin" />
+
+### 2 -Attacher une politique à un groupe
+
+Aller dans Autorisations **multi-comptes > Comptes AWS**
+<Image src={iammulti1} alt="multicomptes > comptes AWS" />
+Sélectionner un ou plusieurs comptes, puis aller sur **Affecter des utilisateurs ou des groupes**
+<Image src={affecterc} alt="bouton affecter compte à droite" />
+Étape 1 : choisir le groupe souhaité
+
+Étape 2 : choisir la politique à attacher
+
+Étape 3 : vérifier et soumettre
