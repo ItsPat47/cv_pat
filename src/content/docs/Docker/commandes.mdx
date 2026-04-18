@@ -1,0 +1,97 @@
+---
+title: Docker images
+description: liste des commandes images
+---
+
+# Images
+Une image Docker est un package léger et immuable qui regroupe l’ensemble des éléments nécessaires au fonctionnement d’une application : le code, le runtime (ex. : Node.js, Python, Java), les bibliothèques, les dépendances système et les fichiers de configuration.  
+Contrairement à une machine virtuelle, une image Docker partage le noyau du système hôte, ce qui la rend beaucoup plus légère et rapide à démarrer.
+
+## Créer une image à partir d'un Dockerfile
+````
+docker build -t <image_name:tag> .
+docker build -t <image_name:tag> . -no-cache #Force docker à build à partir de zéro
+````
+
+<span style= "color: orange" >**--no-cache** </span>  
+Force la reconstruction complète de l’image sans utiliser le cache Docker. Toutes les étapes du Dockerfile sont réexécutées, ce qui garantit l’utilisation des versions les plus récentes des dépendances.
+
+
+## Télécharger des images Dockers
+La commande <span style="color: orange">docker pull</span> permet de télécharger une image depuis un registry (Docker Hub par défaut, ou un registry privé).
+
+```bash
+# Commande de base
+docker pull <image_name>[:tag]
+
+# Exemples
+docker pull nginx:latest
+docker pull python:3.12-slim
+docker pull myregistry.exemple.com/monapp:1.2
+
+```
+Options importantes de <span style="color: orange">docker pull</span>
+````bash
+# Télécharger toutes les versions (tags) d’un repository
+docker pull -a nginx
+
+# Télécharger une image pour une architecture/plateforme spécifique (utile sur Mac M1/M2 ou serveurs ARM)
+docker pull --platform linux/amd64 ubuntu:24.04
+docker pull --platform linux/arm64 ubuntu:24.04
+
+# Mode silencieux (seulement les erreurs)
+docker pull -q nginx:latest
+````
+
+## Voir les conteneur local
+````bash
+docker images -a # Permet de lister tout les images docker 
+
+````
+
+
+## Démarrer un conteneur à partir d’une image
+
+Une fois l’image téléchargée, on utilise <span style='style: orange'> docker </span> run pour créer et démarrer un conteneur.
+Options principales de démarrage
+````bash
+# 1. Démarrage en mode interactif avec terminal (le plus courant pour tester)
+docker run -it <image_name>
+
+# Exemple
+docker run -it nginx /bin/bash
+docker run -it python:3.12-slim python
+````
+- -<span style="color: orange">i </span> ou --interactive : Garde STDIN ouvert (permet d’envoyer des entrées au conteneur).
+- -<span style="color: orange">t </span> ou --tty : Alloue un pseudo-terminal (affiche correctement les couleurs, curseur, etc.).
+Ensemble <span style="color: orange">-it </span> : Permet d’interagir avec le conteneur comme si vous étiez connecté en SSH.
+
+
+
+
+
+
+
+
+
+## Supprimer des images Docker
+
+```bash
+# Supprimer une ou plusieurs images spécifiques (par nom, tag ou ID)
+docker rmi <image_name>[:tag]
+docker image rm <image_name>[:tag]   # commande équivalente (recommandée dans la doc moderne)
+
+# Exemples :
+docker rmi nginx:latest
+docker rmi 4e7024df2f20          # par ID
+
+# Forcer la suppression (même si l'image est utilisée par des conteneurs)
+docker rmi -f <image_name>
+
+# Supprimer les images non utilisées (dangling + inutilisées)
+docker image prune                  # supprime seulement les "dangling" images (non taguées)
+docker image prune -a               # supprime TOUTES les images non utilisées par au moins un conteneur# 
+
+# Nettoyage complet (conteneurs arrêtés, réseaux inutilisés, images inutilisées, cache de build)
+docker system prune -a
+```

@@ -1,0 +1,164 @@
+---
+title: Cron
+descrpition: Cron
+---
+## Introduction
+
+Crontab est un outil qui permet de lancer des tâches de façon régulière sur les systèmes Linux.
+On pourra donc programmer l'exécution de scripts ou de commandes ce qui est pratique pour un serveur pour y lancer des scripts de sauvegardes, ou d'autres automatismes par exemple.
+
+## A propos de cron et crontab
+
+Cron est le démon (service) qui va se charger d'exécuter les planifications. Ces planifications sont saisies dans un fichier de configuration.
+
+Crontab est ce fameux fichier de configuration. Il est propre à chaque utilisateur.
+Le super utilisateur root possède un crontab mais n'importe quel utilisateur du système également. Évidemment, par défaut, les commandes lancées dans le crontab d'un utilisateur se lancent avec les droits de celui-ci.
+
+
+## L'installation
+
+Bien que par défaut, le service est souvent installé, voici les commandes pour l'installer sur les différentes distributions Linux.
+
+Debian et Ubuntu :
+````
+sudo apt install cron
+
+
+Fedora, RHEL (et dérivées) :
+````
+sudo dnf install cronie
+
+
+Gentoo :
+````
+sudo emerge -av sys-process/cronie
+
+````
+
+## La configuration
+
+Les fichiers /etc/cron.allow et /etc/cron.deny permettent de définir les droits d'utilisation sur crontab.
+
+
+**Si le fichier /etc/cron.deny existe, alors vous ne devez pas être mentionné dans le fichier /etc/cron.deny afin de pouvoir utiliser cette commande.
+Si le fichier /etc/cron.allow existe, alors vous devez être présent dans ce fichier pour être autorisé à utiliser cette commande.
+Si aucun fichier n'existe, seul root peut planifier des tâches et dans tous les cas root peut planifier des tâches.**
+
+Je conseille de ne créer qu'un seul des deux fichiers et ensuite placer le nom des utilisateurs auxquels vous voulez donner/refuser l'accès à la commande crontab. Généralement, c'est le fichier cron.deny qui est présent par défaut.
+
+Les fichiers ***/etc/cron.allow*** et ***/etc/cron.deny*** gèrent l'accès à la commande crontab. Cela signifie que si un utilisateur possède un crontab et qu'ensuite on le supprime de liste de /etc/cron.allow, les tâches seront quand même effectuées.
+
+Vous devez supprimer le crontab de cet utilisateur situé dans ***/var/spool/cron/crontabs***
+
+
+
+## Utiliser la commande crontab
+
+Pour afficher le contenu du fichier crontab :
+````
+crontab -l
+
+Pour supprimer toutes les actions du fichier crontab :
+````
+
+crontab -r
+
+
+Pour éditer les actions du fichier crontab :
+````
+
+crontab -e
+
+
+Le crontab s'ouvre avec un éditeur par défaut. Sous Fedora, c'est vi. Si on veut utiliser nano :
+
+````
+````
+export EDITOR=nano
+crontab -e
+````
+
+
+
+### Guide de survie de crontab : les syntaxes
+
+La syntaxe à utiliser est précise.
+
+Voici de manière schématique la syntaxe à respecter d'un crontab:
+
+
+
+
+Le fichier de configuration est constitué des différentes lignes. Chaque ligne correspond à une action.
+
+Prenons l'exemple suivant :
+
+````
+mm hh jj MMM JJJ tâche > log
+````
+
+**mm** : minutes (00-59).
+
+**hh** : heures (00-23) .
+
+**jj** : jour du mois (01-31).
+
+**MMM** : mois (01-12 ou abréviation anglaise sur trois lettres : jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec).
+
+**JJJ** : jour de la semaine (1-7 ou abréviation anglaise sur trois lettres : mon, tue, wed, thu, fri, sat, sun).
+
+
+tâche : commande à exécuter.
+> log (facultatif) : redirection de la sortie vers un fichier de log. Si un fichier de log n'est pas spécifié, un mail sera envoyé à l'utilisateur local.
+
+
+Pour chaque unité, on peut utiliser les notations suivantes :
+
+1-5 : les unités de temps de 1 à 5.
+
+*/6 : toutes les 6 unités de temps (toutes les 6 heures par exemple).
+
+2,7 : les unités de temps 2 et 7.
+
+
+
+
+Bonus, on a des alias rapides tels que @reboot qui vont nous permettre de lancer une commande au boot de la machine. La syntaxe sera la suivante :
+````
+@reboot tâche > log
+````
+
+
+### Exemples
+
+Exécution tous les jours à 22h00 d'une commande et rediriger les infos dans sauvegarde.log :
+
+````
+00 22 * * * /root/scripts/sauvegarde.sh >> sauvegarde.log
+````
+
+Exécution d'une commande toutes les 6 heures :
+````
+00 */6 * * * /root/scripts/synchronisation-ftp.sh
+````
+
+Exécution d'une commande tous les premier du mois à minuit :
+````
+00 00 1 * * /server/lets-encrypt.sh
+````
+
+Exécution d'une commande une fois par an à une heure précise (ici le 25 décembre à 00h15) :
+````
+15 00 25 12 * echo "Le père Noël est passé !"
+````
+
+
+### Envoi de mail
+
+Par défaut, cron envoie un message à l'utilisateur qui a planifié sa tâche.
+
+Pour ne pas envoyer de façon automatique ce message à l'utilisateur (ou utilisateur@domaine.ext si un agent tel que postfix a été configuré) il faut indiquer sur la première ligne du crontab -e
+
+````
+MAILTO=""
+````

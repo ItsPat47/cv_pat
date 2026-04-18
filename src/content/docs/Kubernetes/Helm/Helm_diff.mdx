@@ -1,0 +1,24 @@
+---
+title: Helm update
+description: difference des versions de Helm
+---
+
+### Helm & Helm 2 (Obselete)
+**Architecture:** Helm 2 utilisait un composant appelé **Tiller** installé sur le cluster.
+
+**fonctionnement*:* Le client Helm envoyait les commandes a Tiller, qui les exécutait avec des droits administrateur.
+
+**inconvénient:** Grosse faille de décurité ! Accéder à Tiller = Accéder à tout les clusters !
+
+**Gestion:** les noms de "Releases" devaient être unique sur tout le cluster.
+
+
+
+### Helm 3
+**Architecture:** Suppression de Tiller (Tiller-lesss)
+
+**Sécurité:** Utilise directement les permissions utilisateurs (RBAC).
+
+**Stockage:** Les informations de déploiement son stockées dans des **Secrets** Kubernetes (plus sécurisé)
+
+**Namespacing:** Les noms de "Releases" sont désormais isolés par Namespace. Il est possible d'avoir une release nommée *nginx* dans un namespace dev et un autre *nginx* dans un namespace prod. 

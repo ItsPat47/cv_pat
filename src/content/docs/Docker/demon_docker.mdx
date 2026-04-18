@@ -1,0 +1,97 @@
+---
+title: Demon Docker
+description: ce qu'est un démon docker
+---
+
+## Le Docker Daemon (dockerd)
+
+Le **Docker Daemon** est le processus principal de Docker qui tourne en arrière-plan sur la machine hôte.
+
+C’est lui qui fait tout le travail réel :
+- Gestion des conteneurs (création, démarrage, arrêt, suppression)
+- Gestion des images (build, stockage, suppression)
+- Gestion des réseaux Docker
+- Gestion des volumes
+- Communication avec le client Docker (`docker` en ligne de commande)
+
+### Schéma simplifié
+Client Docker (CLI)  ←→  Docker Daemon (dockerd)  ←→  Conteneurs / Images / Réseaux / Volumes
+
+
+Le client envoie des commandes (`docker run`, `docker build`, etc.) au daemon via une API (socket Unix par défaut sur Linux : `/var/run/docker.sock`).
+
+### Emplacement et nom du processus
+
+- Nom du processus : `dockerd`
+- Sur Linux : généralement lancé par systemd (`systemctl status docker`)
+- Sur Windows et macOS : le daemon tourne dans une machine virtuelle (WSL2 sur Windows, une VM HyperKit sur macOS).
+
+### Commandes utiles pour gérer le daemon
+
+```bash
+# Vérifier si le daemon est en cours d'exécution
+systemctl status docker
+
+# Redémarrer le daemon
+sudo systemctl restart docker
+
+# Arrêter le daemon
+sudo systemctl stop docker
+
+# Démarrer le daemon
+sudo systemctl start docker
+
+# Voir les logs du daemon (très utile en cas de problème)
+journalctl -u docker -f
+# ou
+docker system info
+```
+### Points importants à savoir
+
+- Le daemon doit être lancé pour que toutes les commandes Docker fonctionnent. Si le daemon est arrêté, vous obtiendrez des erreurs du type « Cannot connect to the Docker daemon ».
+- Le daemon a des droits root (ou équivalent). C’est pourquoi il est dangereux d’ajouter des utilisateurs normaux au groupe docker sans réflexion (risque de sécurité élevé).
+- Sur les systèmes de production, on configure souvent le daemon via /etc/docker/daemon.json pour :
+    - Changer le répertoire de stockage (data-root)
+    - Activer le logging driver (json-file, journald, etc.)
+    - Configurer les proxies
+    - Limiter les ressources
+    - Activer le mode swarm, etc.
+
+### Exemple de fichier de configuration basique (/etc/docker/daemon.json)
+````bash
+{
+  "data-root": "/var/lib/docker",
+  "log-driver": "json-file",
+  "log-opts":
+   {
+    "max-size": "10m",
+    "max-file": "3"
+  },
+  "storage-driver": "overlay2"
+
+}
+````
+Après modification de ce fichier, il faut redémarrer le daemon :
+Bash
+````bash
+sudo systemctl restart docker
+````
+
+### Quelque option supplémentaire
+````bash
+{
+  "live-restore": true,                    # Permet aux conteneurs de continuer à tourner pendant un redémarrage du daemon
+  "exec-opts": ["native.cgroupdriver=systemd"],  # Recommandé quand systemd est utilisé (évite des problèmes avec cgroups)
+  "dns": ["8.8.8.8", "8.8.4.4"],           # Définit les serveurs DNS utilisés par les conteneurs
+  "registry-mirrors": ["https://mirror.exemple.com"],  # Miroirs de registry (accélère les pulls d’images)
+  "proxies": 
+  {
+    "http-proxy": "http://proxy.exemple.com:3128",
+    "https-proxy": "https://proxy.exemple.com:3129",
+    "no-proxy": "localhost,127.0.0.1,.exemple.com"
+  },
+  "default-address-pools": [               # Évite les conflits d’IP sur les réseaux Docker
+    {"base": "172.80.0.0/16", "size": 24}
+  ]
+}
+````
